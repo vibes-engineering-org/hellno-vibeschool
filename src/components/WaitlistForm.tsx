@@ -116,13 +116,13 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-4">
+    <div className="w-full space-y-6">
       {waitlistCount !== null && (
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">{waitlistCount}</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-3xl sm:text-4xl font-bold">{waitlistCount}</div>
+              <div className="text-base sm:text-lg text-muted-foreground">
                 {waitlistCount === 1 ? 'person is' : 'people are'} on the waitlist
               </div>
             </div>
@@ -131,16 +131,16 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       )}
 
       <Card>
-        <CardHeader>
-          <CardTitle>Join Vibe School</CardTitle>
-          <CardDescription>
+        <CardHeader className="space-y-3">
+          <CardTitle className="text-xl sm:text-2xl">Apply Now</CardTitle>
+          <CardDescription className="text-base sm:text-lg">
             Co-create a mini app with me and get ready to launch in the Base app on Farcaster
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="projectIdea" className="text-sm font-medium">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-3">
+              <label htmlFor="projectIdea" className="text-base font-medium">
                 Describe what your mini app does (50 characters max)
               </label>
               <Input
@@ -150,14 +150,15 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 placeholder="e.g., Social trading game for crypto enthusiasts"
                 maxLength={50}
                 disabled={isSubmitting}
+                className="h-12 text-base"
               />
-              <div className="text-xs text-muted-foreground">
+              <div className="text-sm text-muted-foreground">
                 {charactersRemaining} characters remaining
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="prompt" className="text-sm font-medium">
+            <div className="space-y-3">
+              <label htmlFor="prompt" className="text-base font-medium">
                 How would you prompt an AI to build this?
               </label>
               <textarea
@@ -165,21 +166,21 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="e.g., Create a mini app where users can create virtual trading groups..."
-                className="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="min-h-24 w-full rounded-md border border-input bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={isSubmitting}
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-12 text-base font-medium"
               disabled={isSubmitting || !isSDKLoaded || !context?.user}
             >
               {isSubmitting ? "Joining..." : "Join Waitlist"}
             </Button>
 
             {!isSDKLoaded && (
-              <div className="text-xs text-muted-foreground text-center">
+              <div className="text-sm text-muted-foreground text-center">
                 Loading Farcaster context...
               </div>
             )}
