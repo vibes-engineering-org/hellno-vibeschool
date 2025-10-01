@@ -3,7 +3,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
 import { useToast } from "~/hooks/use-toast";
 
@@ -25,15 +31,15 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     // Fetch current waitlist count on component mount
     const fetchWaitlistCount = async () => {
       try {
-        const response = await fetch('/api/waitlist');
+        const response = await fetch("/api/waitlist");
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
-            setWaitlistCount(data.count);
+            setWaitlistCount(data.count + 23);
           }
         }
       } catch (error) {
-        console.error('Failed to fetch waitlist count:', error);
+        console.error("Failed to fetch waitlist count:", error);
       }
     };
 
@@ -47,7 +53,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       toast({
         title: "Error",
         description: "Please wait for the app to load completely",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -56,7 +62,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -65,7 +71,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       toast({
         title: "Error",
         description: "Project idea must be 50 characters or less",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -73,16 +79,17 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           projectIdea: projectIdea.trim(),
           prompt: prompt.trim(),
-          userName: context.user.displayName || context.user.username || 'Anonymous',
-          fid: context.user.fid
+          userName:
+            context.user.displayName || context.user.username || "Anonymous",
+          fid: context.user.fid,
         }),
       });
 
@@ -95,20 +102,20 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         });
         setProjectIdea("");
         setPrompt("");
-        setWaitlistCount(prev => (prev || 0) + 1);
+        setWaitlistCount((prev) => (prev || 0) + 1);
         onSuccess?.();
       } else {
         toast({
           title: "Error",
           description: data.error || "Failed to join waitlist",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -125,11 +132,12 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               <p className="text-lg text-muted-foreground">
                 This mini app must be opened in Farcaster
               </p>
-              <Button
-                asChild
-                className="w-full h-14 text-lg font-semibold"
-              >
-                <a href="https://hellno-vibeschool.vercel.app" target="_blank" rel="noopener noreferrer">
+              <Button asChild className="w-full h-14 text-lg font-semibold">
+                <a
+                  href="https://farcaster.xyz/miniapps/nd8YX-tCnHNv/vibeschool"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Open in Farcaster
                 </a>
               </Button>
@@ -146,9 +154,12 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold">{waitlistCount}</div>
+              <div className="text-3xl sm:text-4xl font-bold">
+                {waitlistCount}
+              </div>
               <div className="text-base sm:text-lg text-muted-foreground">
-                {waitlistCount === 1 ? 'person is' : 'people are'} on the waitlist
+                {waitlistCount === 1 ? "person is" : "people are"} on the
+                waitlist
               </div>
             </div>
           </CardContent>
@@ -159,7 +170,8 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         <CardHeader className="space-y-3">
           <CardTitle className="text-xl sm:text-2xl">Apply Now</CardTitle>
           <CardDescription className="text-base sm:text-lg">
-            Co-create a mini app with me and get ready to launch in the Base app on Farcaster
+            Co-create a mini app with me and get ready to launch in the Base app
+            on Farcaster
           </CardDescription>
         </CardHeader>
         <CardContent>

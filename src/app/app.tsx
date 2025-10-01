@@ -24,7 +24,11 @@ export default function App() {
         <div className="bg-muted/30 rounded-lg p-6 space-y-4">
           <h2 className="text-xl font-semibold">What is Vibe School?</h2>
           <p className="text-base leading-relaxed text-muted-foreground">
-            Each week in October 2025 hellno will vibe code mini apps. Apply now to build your mini app with him and Vibes AI. You will own the mini app, get all rewards, and can keep building it afterwards. No strings attached.
+            Each week in October 2025{" "}
+            <a href="https://farcaster.xyz/hellno.eth">hellno.eth</a> will vibe
+            code mini apps. Apply now to build your mini app with him and Vibes
+            AI. You will own the mini app, get all rewards, and can keep
+            building it afterwards. No strings attached.
           </p>
         </div>
 
