@@ -4,10 +4,6 @@ import { PROJECT_TITLE } from "~/lib/constants";
 
 export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
-export const size = {
-  width: 1200,
-  height: 630,
-};
 
 export default async function Image() {
   const imagePath = join(process.cwd(), "public", "og.png");
