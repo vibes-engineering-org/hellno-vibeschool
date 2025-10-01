@@ -9,8 +9,7 @@ export async function GET() {
     accountAssociation: {
       header:
         "eyJmaWQiOjg2OTk5OSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDc2ZDUwQjBFMTQ3OWE5QmEyYkQ5MzVGMUU5YTI3QzBjNjQ5QzhDMTIifQ",
-      payload:
-        "eyJkb21haW4iOiJoZWxsbm8tdmliZXNjaG9vbC52ZXJjZWwuYXBwIn0",
+      payload: "eyJkb21haW4iOiJoZWxsbm8tdmliZXNjaG9vbC52ZXJjZWwuYXBwIn0",
       signature:
         "MHhiMmVkZTFlOGNjODM2YzhiZWU4NGU3M2JhZGIwYmUwZDc3ZmQ3ZDNlNjgxZWIzNzMzNDZiZTdmNjk1YTEzZjE0NmI5ZDBmNDM1ZmRiMWQ1NTNhYWY0YjdjZTdlODhhZDZmMWVkODlhMzc5YzBjYmIwMTdlN2I4N2U2ZmIwZmJlNDFj",
     },
@@ -19,8 +18,8 @@ export async function GET() {
       name: PROJECT_TITLE,
       iconUrl: `${appUrl}/icon.png`,
       homeUrl: appUrl,
-      imageUrl: `${appUrl}/opengraph-image?v=2`,
-      ogImageUrl: `${appUrl}/opengraph-image?v=2`,
+      imageUrl: `${appUrl}/opengraph-image?v=3`,
+      ogImageUrl: `${appUrl}/opengraph-image?v=3`,
       buttonTitle: "Open",
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
