@@ -29,6 +29,8 @@ export const kv = {
         project_id,
         key,
         value,
+      }, {
+        onConflict: 'project_id,key'
       });
     if (error) throw error;
   },
@@ -54,6 +56,8 @@ export const kv = {
         project_id,
         key,
         value: newValue,
+      }, {
+        onConflict: 'project_id,key'
       });
 
     return newValue;
@@ -80,6 +84,8 @@ export const kv = {
         project_id,
         key,
         value: current,
+      }, {
+        onConflict: 'project_id,key'
       });
 
     return current;
@@ -109,6 +115,8 @@ export const kv = {
         project_id,
         key,
         value: merged,
+      }, {
+        onConflict: 'project_id,key'
       });
 
     return merged;

@@ -64,6 +64,8 @@ export async function POST(request: NextRequest) {
         project_id,
         key: "waitlist",
         value: waitlist
+      }, {
+        onConflict: 'project_id,key'
       });
 
     if (error) {
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const supabase = getSupabaseClient();
   const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
 
@@ -101,6 +103,24 @@ export async function GET() {
 
     const waitlist = data?.value || [];
 
+    // Check if this is a request to check for a specific user
+    const userName = request.nextUrl.searchParams.get("userName");
+    if (userName) {
+      const existingEntry = waitlist.find((entry: any) => entry.userName === userName);
+      if (existingEntry) {
+        return NextResponse.json({
+          success: true,
+          exists: true,
+          projectIdea: existingEntry.projectIdea
+        });
+      }
+      return NextResponse.json({
+        success: true,
+        exists: false
+      });
+    }
+
+    // Default: return count
     return NextResponse.json({
       success: true,
       count: Array.isArray(waitlist) ? waitlist.length : 0

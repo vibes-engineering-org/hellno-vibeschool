@@ -22,6 +22,8 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   const [prompt, setPrompt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [submittedIdea, setSubmittedIdea] = useState("");
   const { isSDKLoaded, context } = useMiniAppSdk();
   const { toast } = useToast();
 
@@ -45,6 +47,31 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
     fetchWaitlistCount();
   }, []);
+
+  useEffect(() => {
+    // Check if user already submitted
+    const checkExistingSubmission = async () => {
+      if (!context?.user) return;
+
+      try {
+        const userName = context.user.displayName || context.user.username || "Anonymous";
+        const response = await fetch(`/api/waitlist?userName=${encodeURIComponent(userName)}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.exists && data.projectIdea) {
+            setSubmittedIdea(data.projectIdea);
+            setHasSubmitted(true);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to check existing submission:", error);
+      }
+    };
+
+    if (isSDKLoaded && context?.user) {
+      checkExistingSubmission();
+    }
+  }, [isSDKLoaded, context]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +127,8 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
           title: "Success!",
           description: "You&apos;ve been added to the Vibe School waitlist",
         });
+        setSubmittedIdea(projectIdea.trim());
+        setHasSubmitted(true);
         setProjectIdea("");
         setPrompt("");
         setWaitlistCount((prev) => (prev || 0) + 1);
@@ -160,6 +189,21 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               <div className="text-base sm:text-lg text-muted-foreground">
                 {waitlistCount === 1 ? "person is" : "people are"} on the
                 waitlist
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {hasSubmitted && submittedIdea && (
+        <Card className="border-green-500/50 bg-green-500/5">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-2">
+              <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                Your mini app idea:
+              </div>
+              <div className="text-lg font-semibold">
+                &quot;{submittedIdea}&quot;
               </div>
             </div>
           </CardContent>
