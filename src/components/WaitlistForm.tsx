@@ -115,6 +115,31 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     }
   };
 
+  // If SDK loaded but no user context, show link to open in Farcaster
+  if (isSDKLoaded && !context?.user) {
+    return (
+      <div className="w-full space-y-6">
+        <Card>
+          <CardContent className="pt-6 pb-6">
+            <div className="text-center space-y-4">
+              <p className="text-lg text-muted-foreground">
+                This mini app must be opened in Farcaster
+              </p>
+              <Button
+                asChild
+                className="w-full h-14 text-lg font-semibold"
+              >
+                <a href="https://hellno-vibeschool.vercel.app" target="_blank" rel="noopener noreferrer">
+                  Open in Farcaster
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full space-y-6">
       {waitlistCount !== null && (
@@ -182,12 +207,6 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             {!isSDKLoaded && (
               <div className="text-sm text-muted-foreground text-center">
                 Loading Farcaster context...
-              </div>
-            )}
-
-            {isSDKLoaded && !context?.user && (
-              <div className="text-sm text-muted-foreground text-center">
-                This mini app must be opened in Farcaster
               </div>
             )}
           </form>
