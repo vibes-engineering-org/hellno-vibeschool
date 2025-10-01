@@ -197,29 +197,33 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
       {hasSubmitted && submittedIdea && (
         <Card className="border-green-500/50 bg-green-500/5">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-2">
+          <CardContent className="pt-6 pb-6">
+            <div className="text-center space-y-3">
               <div className="text-sm font-medium text-green-600 dark:text-green-400">
                 Your mini app idea:
               </div>
               <div className="text-lg font-semibold">
                 &quot;{submittedIdea}&quot;
               </div>
+              <div className="text-sm text-muted-foreground mt-4">
+                You&apos;ve already applied to Vibe School. We&apos;ll be in touch soon!
+              </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      <Card>
-        <CardHeader className="space-y-3">
-          <CardTitle className="text-xl sm:text-2xl">Apply Now</CardTitle>
-          <CardDescription className="text-base sm:text-lg">
-            Co-create a mini app with me and get ready to launch in the Base app
-            on Farcaster
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+      {!hasSubmitted && (
+        <Card>
+          <CardHeader className="space-y-3">
+            <CardTitle className="text-xl sm:text-2xl">Apply Now</CardTitle>
+            <CardDescription className="text-base sm:text-lg">
+              Co-create a mini app with me and get ready to launch in the Base app
+              on Farcaster
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-3">
               <label htmlFor="projectIdea" className="text-base font-medium">
                 Describe what your mini app does (50 characters max)
@@ -268,6 +272,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
           </form>
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }
