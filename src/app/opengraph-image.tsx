@@ -5,8 +5,8 @@ import { PROJECT_TITLE } from "~/lib/constants";
 export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
 export const size = {
-  width: 993,
-  height: 520,
+  width: 1200,
+  height: 630,
 };
 
 export default async function Image() {

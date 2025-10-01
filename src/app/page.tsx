@@ -13,7 +13,7 @@ const appUrl =
 // NEVER change: version, action.type, action structure
 const frame = {
   version: "next",
-  imageUrl: `${appUrl}/opengraph-image?v=3`,
+  imageUrl: `${appUrl}/opengraph-image?v=4`,
   button: {
     title: "Open",
     action: {
