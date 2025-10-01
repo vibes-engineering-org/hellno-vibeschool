@@ -184,6 +184,12 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
                 Loading Farcaster context...
               </div>
             )}
+
+            {isSDKLoaded && !context?.user && (
+              <div className="text-sm text-muted-foreground text-center">
+                This mini app must be opened in Farcaster
+              </div>
+            )}
           </form>
         </CardContent>
       </Card>

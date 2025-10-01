@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseClientWithToken } from "~/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,46 +26,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch JWT token from backend
-    const jwtResponse = await fetch(new URL("/api/get-jwt", request.url));
-    if (!jwtResponse.ok) {
-      return NextResponse.json(
-        { success: false, error: "Failed to fetch JWT token" },
-        { status: 400 }
-      );
-    }
-    const { token } = await jwtResponse.json();
-    const supabase = createSupabaseClientWithToken(token);
+    // Get existing waitlist array
+    const { data: existingData } = await supabase
+      .from("kv_store")
+      .select("value")
+      .eq("project_id", project_id)
+      .eq("key", "waitlist")
+      .maybeSingle();
 
-    // Use key-value store pattern with Supabase
-    const tableName = `waitlist-${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID}`;
+    const waitlist = existingData?.value || [];
 
     // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from(tableName)
-      .select("*")
-      .eq("user_name", userName)
-      .single();
-
-    if (existingUser) {
+    if (waitlist.some((entry: any) => entry.userName === userName)) {
       return NextResponse.json(
         { success: false, error: "You are already on the waitlist" },
         { status: 400 }
       );
     }
 
-    // Insert new waitlist entry
-    const { data, error } = await supabase
-      .from(tableName)
-      .insert({
-        user_name: userName,
-        fid: fid,
-        project_idea: projectIdea,
-        prompt: prompt,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+    // Add new entry
+    const newEntry = {
+      userName,
+      fid,
+      projectIdea,
+      prompt,
+      createdAt: new Date().toISOString()
+    };
+
+    waitlist.push(newEntry);
+
+    // Update the waitlist
+    const { error } = await supabase
+      .from("kv_store")
+      .upsert({
+        project_id,
+        key: "waitlist",
+        value: waitlist
+      });
 
     if (error) {
       return NextResponse.json(
@@ -69,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: data
+      data: newEntry
     });
 
   } catch (error) {
@@ -80,36 +84,21 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Fetch JWT token from backend
-    const jwtResponse = await fetch(new URL("/api/get-jwt", request.url));
-    if (!jwtResponse.ok) {
-      return NextResponse.json(
-        { success: false, error: "Failed to fetch JWT token" },
-        { status: 400 }
-      );
-    }
-    const { token } = await jwtResponse.json();
-    const supabase = createSupabaseClientWithToken(token);
+    // Get waitlist array
+    const { data } = await supabase
+      .from("kv_store")
+      .select("value")
+      .eq("project_id", project_id)
+      .eq("key", "waitlist")
+      .maybeSingle();
 
-    const tableName = `waitlist-${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID}`;
-
-    // Get count of waitlist entries
-    const { count, error } = await supabase
-      .from(tableName)
-      .select("*", { count: "exact", head: true });
-
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 400 }
-      );
-    }
+    const waitlist = data?.value || [];
 
     return NextResponse.json({
       success: true,
-      count: count || 0
+      count: Array.isArray(waitlist) ? waitlist.length : 0
     });
 
   } catch (error) {

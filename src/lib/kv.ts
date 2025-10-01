@@ -5,51 +5,102 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
-const pid = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
+const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
+
 export const kv = {
   get: async (key: string): Promise<any> => {
-    // kv_get returns JSONB, which Supabase surfaces as a JavaScript object/primitive
-    const { data, error } = await supabase.rpc("kv_get", { pid, k: key });
-    if (error) throw error;
-    return data; // JSONB value or null
+    const { data } = await supabase
+      .from("kv_store")
+      .select("value")
+      .eq("project_id", project_id)
+      .eq("key", key)
+      .maybeSingle();
+    return data?.value ?? null;
   },
 
-  set: async (key: string, v: any): Promise<void> => {
-    // kv_set takes a JSONB argument; if v is a JS primitive/object, Supabase auto‐converts it
-    const { error } = await supabase.rpc("kv_set", { pid, k: key, v });
+  set: async (key: string, value: any): Promise<void> => {
+    const { error } = await supabase
+      .from("kv_store")
+      .upsert({
+        project_id,
+        key,
+        value,
+      });
     if (error) throw error;
   },
 
   incr: async (key: string, delta = 1): Promise<number> => {
-    // kv_incr returns an INT (JavaScript number)
-    const { data, error } = await supabase.rpc("kv_incr", {
-      pid,
-      k: key,
-      delta,
-    });
-    if (error) throw error;
-    return data as number;
+    // Read current value
+    const { data } = await supabase
+      .from("kv_store")
+      .select("value")
+      .eq("project_id", project_id)
+      .eq("key", key)
+      .maybeSingle();
+
+    const current = typeof data?.value === "number" ? data.value : 0;
+    const newValue = current + delta;
+
+    // Write new value
+    await supabase
+      .from("kv_store")
+      .upsert({
+        project_id,
+        key,
+        value: newValue,
+      });
+
+    return newValue;
   },
 
   append: async (key: string, elem: any): Promise<any> => {
-    // kv_append returns the updated JSONB array
-    const { data, error } = await supabase.rpc("kv_append", {
-      pid,
-      k: key,
-      elem,
-    });
-    if (error) throw error;
-    return data as any;
+    // Read current array
+    const { data } = await supabase
+      .from("kv_store")
+      .select("value")
+      .eq("project_id", project_id)
+      .eq("key", key)
+      .maybeSingle();
+
+    const current = Array.isArray(data?.value) ? data.value : [];
+    current.push(elem);
+
+    // Write updated array
+    await supabase
+      .from("kv_store")
+      .upsert({
+        project_id,
+        key,
+        value: current,
+      });
+
+    return current;
   },
 
   merge: async (key: string, patch: object): Promise<any> => {
-    // kv_merge returns the merged JSONB object
-    const { data, error } = await supabase.rpc("kv_merge", {
-      pid,
-      k: key,
-      patch,
-    });
-    if (error) throw error;
-    return data as any;
+    // Read current object
+    const { data } = await supabase
+      .from("kv_store")
+      .select("value")
+      .eq("project_id", project_id)
+      .eq("key", key)
+      .maybeSingle();
+
+    const current =
+      typeof data?.value === "object" && !Array.isArray(data.value)
+        ? data.value
+        : {};
+    const merged = { ...current, ...patch };
+
+    // Write merged object
+    await supabase
+      .from("kv_store")
+      .upsert({
+        project_id,
+        key,
+        value: merged,
+      });
+
+    return merged;
   },
 };
