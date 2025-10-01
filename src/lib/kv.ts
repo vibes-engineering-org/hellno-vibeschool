@@ -1,14 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
-
-const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
+}
 
 export const kv = {
   get: async (key: string): Promise<any> => {
+    const supabase = getSupabaseClient();
+    const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
     const { data } = await supabase
       .from("kv_store")
       .select("value")
@@ -19,6 +21,8 @@ export const kv = {
   },
 
   set: async (key: string, value: any): Promise<void> => {
+    const supabase = getSupabaseClient();
+    const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
     const { error } = await supabase
       .from("kv_store")
       .upsert({
@@ -30,6 +34,8 @@ export const kv = {
   },
 
   incr: async (key: string, delta = 1): Promise<number> => {
+    const supabase = getSupabaseClient();
+    const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
     // Read current value
     const { data } = await supabase
       .from("kv_store")
@@ -54,6 +60,8 @@ export const kv = {
   },
 
   append: async (key: string, elem: any): Promise<any> => {
+    const supabase = getSupabaseClient();
+    const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
     // Read current array
     const { data } = await supabase
       .from("kv_store")
@@ -78,6 +86,8 @@ export const kv = {
   },
 
   merge: async (key: string, patch: object): Promise<any> => {
+    const supabase = getSupabaseClient();
+    const project_id = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
     // Read current object
     const { data } = await supabase
       .from("kv_store")
